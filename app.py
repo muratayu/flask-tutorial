@@ -1,12 +1,31 @@
 from flask import Flask, render_template,request
 import random
 from dotenv import load_dotenv
+import urllib.request, urllib.parse
+import json
 
 load_dotenv()
 API_KEY = os.environ.get("API_KEY")
 print("API_KEY=", API_KEY)
 
+FORECAST_API = 'https://api.openweathermap.org/data/2.5/forecast'
+
 app = Flask(__name__)
+
+@app.route('/forecast')
+def forecast():
+    params = {
+        'appid' : API_KEY,
+        'q' : 'Tokyo',
+        'units' : 'metric'
+    }
+    url = FORECAST_API + '?' + urllib.parse.urlencode(params)
+    req = urllib.request.Request(url)
+    res = urllib.request.urlopen(req)
+    result = res.read().decode('utf-8')    
+    res.close()
+
+    return result
 
 @app.route('/')
 def hello():
