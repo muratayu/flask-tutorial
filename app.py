@@ -24,8 +24,20 @@ def forecast():
     res = urllib.request.urlopen(req)
     result = res.read().decode('utf-8')    
     res.close()
+    json_body = json.loads(result)
+    
+    forecasts = []
+    for api_data in json_body["list"]:
+        forecasts.append({
+            "time": api_data["dt_txt"],
+            "temp": api_data["main"]["temp"],
+            "humidity": api_data["main"]["humidity"],
+            "pressure": api_data["main"]["pressure"],
+            "icon": api_data["weather"][0]["icon"],
+        })
 
-    return result
+    return render_template('forecast.html', forecasts=forecasts)
+
 
 @app.route('/')
 def hello():
